@@ -1,0 +1,6 @@
+outputs/
+outputs_multiclass/ 
+
+cnn_datasets/
+
+logs/
