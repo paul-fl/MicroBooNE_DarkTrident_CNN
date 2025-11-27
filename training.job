@@ -1,0 +1,9 @@
+executable = training_payload.sh
+output = logs/outputfile.$(CLUSTER).$(PROCESS)
+error = logs/errorfile.$(CLUSTER).$(PROCESS)
+log = logs/example.job.$(CLUSTER).$(PROCESS).log
+request_gpus = 1
+requirements = regexp("V100|A6000", string(TARGET.GPUs_DeviceName))
+notification = always
++MaxRuntime = 30000
+queue

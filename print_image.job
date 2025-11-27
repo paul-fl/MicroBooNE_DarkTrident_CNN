@@ -1,0 +1,10 @@
+executable = print_image_payload.sh
+output     = logs/print_image.$(CLUSTER).$(PROCESS).out
+error      = logs/print_image.$(CLUSTER).$(PROCESS).err
+log        = logs/print_image.$(CLUSTER).$(PROCESS).log
+request_gpus = 1
+requirements = regexp("V100|A6000", string(TARGET.GPUs_DeviceName))
+notification = always
++MaxRuntime = 7200
+queue
+

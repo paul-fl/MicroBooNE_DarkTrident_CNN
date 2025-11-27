@@ -1,0 +1,10 @@
+executable = occlusion_payload.sh
+output     = logs/occlusion.$(CLUSTER).$(PROCESS).out
+error      = logs/occlusion.$(CLUSTER).$(PROCESS).err
+log        = logs/occlusion.$(CLUSTER).$(PROCESS).log
+request_gpus = 1
+requirements = regexp("V100|A6000", string(TARGET.GPUs_DeviceName))
+notification = Always
++MaxRuntime = 7200
+queue
+

@@ -1,0 +1,9 @@
+executable = inference_loop_payload.sh
+output     = logs/inference.$(Cluster).$(Process).out
+error      = logs/inference.$(Cluster).$(Process).err
+log        = logs/inference.$(Cluster).$(Process).log
+request_gpus = 1
+requirements = regexp("V100|A6000", string(TARGET.GPUs_DeviceName))
+notification = Always
++MaxRuntime = 14400
+queue
