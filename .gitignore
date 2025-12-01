@@ -3,5 +3,6 @@ outputs_multiclass/
 
 cnn_datasets/
 CNN_weights/
+CNN_weights_multiclass/
 
 logs/

@@ -120,34 +120,59 @@ def TrainCNN():
     init = time.time()
     for epoch in range(EPOCHS):
         print("\n@{}th epoch...".format(epoch))
+
         for batch_idx, (x_batch, y_batch, info_batch, nevents_batch) in enumerate(train_loader):
+
             print("\n@{}th epoch, @ batch_id {}".format(epoch, batch_idx))
             x_batch = x_batch.to(train_device).view((-1,1,512,512))
             y_batch = y_batch.to(train_device)
+
             loss = train_step(x_batch, y_batch)
             train_losses.append(loss)
+
             print('\r Train Epoch: {}/{} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch,
                 EPOCHS-1,
                 batch_idx * len(x_batch), 
                 len(train_loader.dataset),
                 100. * batch_idx / len(train_loader), 
-                loss), 
+                loss),
                 end='')
+
+            # --- GUARANTEED PERIODIC WEIGHT SAVING ---
+            if cfg.save_weights and (step % cfg.save_every_step == 0):
+                torch.save(
+                    mpid.state_dict(),
+                    CNN_weights.format(timestr(), epoch, batch_idx, labels, title, step)
+                )
+
+            # --- TEST EVERY cfg.test_every_step ---
             if (batch_idx % cfg.test_every_step == 1 and cfg.run_test):
-                if (cfg.save_weights and epoch >= 3 and epoch <= 6):
-                    torch.save(mpid.state_dict(), CNN_weights.format(timestr(), epoch, batch_idx,labels, title, step))
 
                 print("Start eval on test sample.......@step..{}..@epoch..{}..@batch..{}".format(step,epoch, batch_idx))
-                test_accuracy = mpid_func_multiclass.validation(mpid, test_loader, cfg.batch_size_test, train_device, event_nums=cfg.test_events_nums)
+
+                test_accuracy = mpid_func_multiclass.validation(
+                    mpid, test_loader, cfg.batch_size_test, train_device,
+                    event_nums=cfg.test_events_nums
+                )
                 print("Test Accuracy {}".format(test_accuracy))
+
                 print("Start eval on training sample...@epoch..{}.@batch..{}".format(epoch, batch_idx))
-                train_accuracy = mpid_func_multiclass.validation(mpid, train_loader, cfg.batch_size_train, train_device, event_nums=cfg.test_events_nums)
+
+                train_accuracy = mpid_func_multiclass.validation(
+                    mpid, train_loader, cfg.batch_size_train, train_device,
+                    event_nums=cfg.test_events_nums
+                )
                 print("Train Accuracy {}".format(train_accuracy))
-                test_loss= test_step(test_loader, train_device)
+
+                test_loss = test_step(test_loader, train_device)
                 print("Test Loss {}".format(test_loss))
-                fout.write("%f,%f,%f,%f,%f,%f\n" % (train_accuracy, test_accuracy, loss, test_loss, epoch, step))
-            step+=1
+
+                fout.write("%f,%f,%f,%f,%f,%f\n" % 
+                    (train_accuracy, test_accuracy, loss, test_loss, epoch, step))
+
+            step += 1
+
     fout.close()
     end = time.time()
     print("\nTotal training time: {:0.4f} seconds".format(end-init))
@@ -155,3 +180,4 @@ def TrainCNN():
 
 if __name__ == '__main__':
     TrainCNN()
+
