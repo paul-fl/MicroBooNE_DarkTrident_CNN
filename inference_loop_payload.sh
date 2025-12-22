@@ -13,6 +13,6 @@ cd /workspace/DM-CNN
 source setup_larcv2_dm.sh
 
 # Run inference loop (cfg loaded automatically inside script)
-python3 ./uboone/inference_multiclass.py
+python3 ./uboone/inference_loop_DM-CNN.py
 "
 
